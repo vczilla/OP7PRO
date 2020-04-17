@@ -33,7 +33,7 @@
 #include <linux/mempolicy.h>
 #include <linux/migrate.h>
 #include <linux/task_work.h>
-
+#include <linux/moduleparam.h>
 #include <trace/events/sched.h>
 
 #include "sched.h"
@@ -84,9 +84,11 @@ walt_dec_cfs_rq_stats(struct cfs_rq *cfs_rq, struct task_struct *p) {}
 #define walt_dec_throttled_cfs_rq_stats(...)
 #endif
 
-// add for chainboost CONFIG_ONEPLUS_CHAIN_BOOST
+// add for chainboost
+//#if defined(CONFIG_ONEPLUS_CHAIN_BOOST)
 unsigned  int __read_mostly main_preempt_disable = 1;
 module_param(main_preempt_disable, uint, 0664);
+//#endif
 
 /*
  * Targeted preemption latency for CPU-bound tasks:
