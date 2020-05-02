@@ -1239,7 +1239,7 @@ static void motor_run_work(struct work_struct* work)
 			if (chip->motor_direction == 1) {//camera up
 				value = chip->camera_up_step_count * MOTOR_STOP_TIMEOUT;
 
-				MOTOR_LOG("motor up, use step count, value : %lli", value);
+				MOTOR_LOG("motor up, use step count, value : %lld", value);
 
 				nsecond = do_div(value, 1000000000);//value = value/1000000000 ,nsecond = value % 1000000000
 				intsecond = (unsigned long) value;
@@ -1257,7 +1257,7 @@ static void motor_run_work(struct work_struct* work)
 				value = (chip->speed_up_pwm_count * chip->pwm_period)+
 						 ((chip->camera_up_step_count - chip->speed_up_pwm_count) * MOTOR_STOP_TIMEOUT);
 
-				MOTOR_LOG("motor up, use step count, value : %lli", value);
+				MOTOR_LOG("motor up, use step count, value : %lld", value);
 
 				nsecond = do_div(value, 1000000000);//value = value/1000000000 ,nsecond = value % 1000000000
 				intsecond = (unsigned long) value;
@@ -1267,7 +1267,7 @@ static void motor_run_work(struct work_struct* work)
 				value = (chip->speed_up_pwm_count * chip->pwm_period)+
 						 ((chip->camera_up_step_count - chip->speed_up_pwm_count + 20 * 32) * MOTOR_STOP_TIMEOUT);
 
-				MOTOR_LOG("motor up, use step count, value : %lli", value);
+				MOTOR_LOG("motor up, use step count, value : %lld", value);
 
 				nsecond = do_div(value, 1000000000);//value = value/1000000000 ,nsecond = value % 1000000000
 				intsecond = (unsigned long) value;
@@ -1284,7 +1284,7 @@ static void motor_run_work(struct work_struct* work)
 			//intsecond = (unsigned long) value;
 		//}
 
-		MOTOR_LOG("time value = %lli nsecond = %lu intsecond = %lu , whole_jonery_time : %lu \n", 
+		MOTOR_LOG("time value = %llu nsecond = %lu intsecond = %lu , whole_jonery_time : %lu \n", 
 		                value, nsecond, intsecond, chip->whole_jonery_time);
 		hrtimer_start(&chip->stop_timer, ktime_set(intsecond, nsecond), HRTIMER_MODE_REL);
 
@@ -1292,7 +1292,7 @@ static void motor_run_work(struct work_struct* work)
 		value = chip->speed_up_pwm_count * chip->pwm_period;
 		nsecond = do_div(value, 1000000000);//value = value/1000000000 ,nsecond = value % 1000000000
 		intsecond = (unsigned long) value;
-		MOTOR_LOG("time value = %lli nsecond = %lu intsecond = %lu, chip->speed_up_pwm_count = %d, chip->pwm_period = %lu \n", 
+		MOTOR_LOG("time value = %llu nsecond = %lu intsecond = %lu, chip->speed_up_pwm_count = %d,chip->pwm_period = %lu \n", 
 		                value, nsecond, intsecond, chip->speed_up_pwm_count, chip->pwm_period);
 		hrtimer_start(&chip->speed_up_timer, ktime_set(intsecond, nsecond), HRTIMER_MODE_REL);
 		mutex_unlock(&motor_start_mutex);
