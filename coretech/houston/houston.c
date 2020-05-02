@@ -721,7 +721,7 @@ void ht_collect_perf_data(struct work_struct *work)
 
 		/* create perf event */
 		ht_logv(
-				"rtg_task: comm: %s, pid: %d, tgid: %d, fcnt: %u, fpeak: %u, rtg_cnt: %lu, rtg_peak: %lu, ts: %lld\n",
+				"rtg_task: comm: %s, pid: %d, tgid: %d, fcnt: %u, fpeak: %u, rtg_cnt: %d, rtg_peak: %d, ts: %lld\n",
 				rtg_task->comm, rtg_task->pid, rtg_task->tgid,
 				rtg_task->f_cnt, rtg_task->f_peak,
 				rtg_task->rtg_cnt, rtg_task->rtg_peak,
@@ -888,7 +888,7 @@ static inline void do_cpufreq_boost_helper(
 static void do_fps_boost(unsigned int val, unsigned int period_us)
 {
 	int ais_active = ais_enable;
-	int i;
+	int i=0;
 	int boost_cluster[HT_CLUSTERS] = {0};
 	unsigned int cur[HT_CLUSTERS] = {0}, orig[HT_CLUSTERS] = {0};
 	struct task_struct *t;
@@ -929,7 +929,7 @@ static void do_fps_boost(unsigned int val, unsigned int period_us)
 	}
 #endif
 
-	ht_logv("boost handler: %llu\n", val);
+	ht_logv("boost handler: %u\n", val);
 
 	if (val > 0) {
 		/* ais version boost */
@@ -1012,7 +1012,7 @@ static void do_fps_boost(unsigned int val, unsigned int period_us)
 	if (val > 0) {
 		for (i = 0; i < HT_CLUSTERS; ++i) {
 			if (boost_cluster[i]) {
-				ht_logv("boost cluster %d from %lu to %lu, ddr from %llu to %llu. ais %d\n",
+				ht_logv("boost cluster %d from %d to %d, ddr from %llu to %llu. ais %d\n",
 						i, orig[i], cur[i], prev_ddr_target, ddr_target, ais_active);
 			}
 		}
@@ -1993,7 +1993,7 @@ static int rtg_dump_show(char *buf, const struct kernel_param *kp)
 	spin_lock(&ht_rtg_lock);
 	cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "RTG list: comm, pid, util, peak, cnt, delta ts, ts\n");
 	list_for_each_entry(t, &ht_rtg_head, rtg_node) {
-		cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "%s %d %lu %u %u %lld %lld\n",
+		cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "%s %d %d %u %u %lld %lld\n",
 				t->comm, t->pid, t->ravg.demand_scaled,
 				t->rtg_peak, t->rtg_cnt,
 				time - t->rtg_ts, t->rtg_ts);
@@ -2032,7 +2032,7 @@ static int get_util(bool isRender, int *num)
 		list_for_each_entry(t, &ht_rtg_head, rtg_node) {
 			util += t->ravg.demand_scaled;
 			(*num)++;
-			ht_logv("RTG: comm:%s pid:%d util:%lu\n",
+			ht_logv("RTG: comm:%s pid:%d util:%d\n",
 					t->comm, t->pid, t->ravg.demand_scaled);
 		}
 		spin_unlock(&ht_rtg_lock);
@@ -2043,7 +2043,7 @@ static int get_util(bool isRender, int *num)
 			if (RenPid != t->pid)
 				continue;
 			util = t->ravg.demand_scaled;
-			ht_logv("Render: comm:%s pid:%d util:%lu\n",
+			ht_logv("Render: comm:%s pid:%d util:%d\n",
 					t->comm, t->pid, t->ravg.demand_scaled);
 			break;
 		}

@@ -1,5 +1,6 @@
 ifeq ($(cc-name),gcc)
-subdir-ccflags-y := -Wno-format -Wno-maybe-uninitialized
+#subdir-ccflags-y := -Wno-format -Wno-maybe-uninitialized
+subdir-ccflags-y := -Wall -Werror
 endif
 
 obj-$(CONFIG_OPCHAIN) += uxcore/

@@ -23,19 +23,19 @@
 #endif
 
 /* time measurement */
-#define CC_TIME_START(start) { \
+#define CC_TIME_START(s) \
 	if (cc_time_measure) \
-		start = ktime_get(); \
-}
-#define CC_TIME_END(start, end, t, tmax) { \
+		s = ktime_get();
+
+#define CC_TIME_END(s, e, t, tmax)  \
 	if (cc_time_measure) { \
-		end = ktime_get(); \
-		t = ktime_to_us(ktime_sub(end, begin)); \
+		e = ktime_get(); \
+		t = ktime_to_us(ktime_sub(e, s)); \
 		if (t > tmax) \
 			tmax = t; \
 		cc_logv("%s: cost: %lldus, max: %lldus\n", __func__, t, tmax); \
-	}\
-}
+	}
+
 static bool cc_time_measure = true;
 module_param_named(time_measure, cc_time_measure, bool, 0644);
 
@@ -266,7 +266,7 @@ out:
 
 static void cc_adjust_cpufreq(struct cc_command* cc)
 {
-	u32 clus, min, max;
+	u32 clus = 0, min, max;
 	bool reset = false;
 
 	if (!cc_cpu_boost_enable)
@@ -808,6 +808,7 @@ static void cc_tsk_acq(struct cc_tsk_data* data)
 	int prio;
 
 	/* update boost ts */
+	cc = &data->cc;
 	cc_boost_ts_update(cc);
 
 	current->cc_enable = true;
@@ -816,7 +817,6 @@ static void cc_tsk_acq(struct cc_tsk_data* data)
 	/* TODO check category & prio value */
 	category = data->cc.category;
 	prio = data->cc.prio;
-	cc = &data->cc;
 	delay_us = cc->period_us;
 
 	dump_cc(cc, __func__, "current request");
@@ -1037,7 +1037,7 @@ static int cc_ctl_close(struct inode *ip, struct file *fp)
 
 static long cc_ctl_ioctl(struct file *file, unsigned int cmd, unsigned long __user arg)
 {
-	ktime_t begin, end;
+	ktime_t begin=0, end=0;
 	s64 t;
 	static s64 tmax = 0;
 
@@ -1046,7 +1046,7 @@ static long cc_ctl_ioctl(struct file *file, unsigned int cmd, unsigned long __us
 
 	CC_TIME_START(begin);
 
-	cc_logv("%s: cmd: %u, arg: %lu\n", __func__, CC_IOC_COMMAND, arg);
+	cc_logv("%s: cmd: %lu, arg: %lu\n", __func__, CC_IOC_COMMAND, arg);
 	switch (cmd) {
 	case CC_IOC_COMMAND:
 		{
@@ -1165,7 +1165,7 @@ static void __cc_queue_rq(struct cc_async_rq* rq, struct list_head* head)
 static void cc_work(struct work_struct *work)
 {
 	/* time related */
-	ktime_t begin, end;
+	ktime_t begin=0, end=0;
 	s64 t;
 	static s64 tmax = 0;
 
@@ -1184,7 +1184,7 @@ static void cc_work(struct work_struct *work)
 
 static int cc_worker(void* arg)
 {
-	ktime_t begin, end;
+	ktime_t begin=0, end=0;
 	s64 t;
 	static s64 tmax = 0;
 
@@ -1292,7 +1292,7 @@ static int cc_dump_list_show(char *buf, const struct kernel_param *kp)
 		++size;
 	}
 	if (size)
-		cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "\n", rq->idx);
+		cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "\n");
 	cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "request list: size: %d\n", size);
 
 	/* pending list */
@@ -1302,7 +1302,7 @@ static int cc_dump_list_show(char *buf, const struct kernel_param *kp)
 		++size;
 	}
 	if (size)
-		cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "\n", rq->idx);
+		cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "\n");
 	cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "pending list: size: %d\n", size);
 
 	spin_unlock(&cc_async_lock);
@@ -1343,7 +1343,7 @@ static int cc_dump_status_show(char *buf, const struct kernel_param *kp)
 	/* dump ddrfreq control status */
 	val = query_ddrfreq();
 	cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "ddrfreq: %llu\n", val);
-	cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "expected ddrfreq: %lu\n", atomic_read(&cc_expect_ddrfreq));
+	cnt += snprintf(buf + cnt, PAGE_SIZE - cnt, "expected ddrfreq: %d\n", atomic_read(&cc_expect_ddrfreq));
 	return cnt;
 }
 
