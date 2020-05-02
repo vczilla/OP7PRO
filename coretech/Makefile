@@ -1,3 +1,7 @@
+ifeq ($(cc-name),gcc)
+subdir-ccflags-y := -Wno-format -Wno-maybe-uninitialized
+endif
+
 obj-$(CONFIG_OPCHAIN) += uxcore/
 CORE_PATH = $(KBUILD_SRC)/coretech/uxcore/core
 ifeq ($(CORE_PATH),$(wildcard $(CORE_PATH)))

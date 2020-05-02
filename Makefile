@@ -509,8 +509,10 @@ export CLANG_FLAGS
 endif
 
 ifeq ($(cc-name),gcc)
+ifeq ($(ld-name),lld)
 KBUILD_CFLAGS	+= -fuse-ld=lld
 KBUILD_AFLAGS	+= -fuse-ld=lld
+endif
 endif
 
 RETPOLINE_CFLAGS_GCC := -mindirect-branch=thunk-extern -mindirect-branch-register
@@ -779,11 +781,14 @@ KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
 KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
 KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
 else
-
-KBUILD_CFLAGS += $(call cc-option,-fno-delete-null-pointer-checks,)
+KBUILD_CFLAGS += $(call cc-option, -Wno-sometimes-uninitialized)
+KBUILD_CFLAGS += $(call cc-option,-fno-delete-null-pointer-checks)
 # These warnings generated too much noise in a regular build.
 # Use make W=1 to enable them (see scripts/Makefile.extrawarn)
 KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+KBUILD_CFLAGS += -fno-builtin
+KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
+KBUILD_CFLAGS += $(call cc-option, -mno-global-merge)
 endif
 
 ifeq ($(ld-name),lld)
