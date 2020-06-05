@@ -1873,16 +1873,19 @@ static void tfa98xx_add_widgets(struct tfa98xx *tfa98xx)
 //add by Multimedia,do not add the following non-used widgets to hold mic.
     if(1) {
         return;
-	}
+    }
+
 	widgets = devm_kzalloc(&tfa98xx->i2c->dev,
 			sizeof(struct snd_soc_dapm_widget) *
 				ARRAY_SIZE(tfa98xx_dapm_widgets_common),
 			GFP_KERNEL);
-	if (!widgets)
+	if (!widgets) {
 		return;
+	}
+
 	memcpy(widgets, tfa98xx_dapm_widgets_common,
-			sizeof(struct snd_soc_dapm_widget) *
-				ARRAY_SIZE(tfa98xx_dapm_widgets_common));
+				sizeof(struct snd_soc_dapm_widget) *
+					ARRAY_SIZE(tfa98xx_dapm_widgets_common));
 
 	tfa98xx_append_i2c_address(&tfa98xx->i2c->dev,
 				tfa98xx->i2c,
@@ -2892,37 +2895,37 @@ int tfa98xx_keyreg_print(struct tfa98xx *tfa98xx)
 
        ret = regmap_read(tfa98xx->regmap, 0, &SYS_CONTROL0);
        if (ret < 0) {
-              dev_err(&tfa98xx->i2c->dev, "Failed to read 0-SYS_CONTROL0\n");
+              dev_err(&tfa98xx->i2c->dev, "Failed to read 0-SYS_CONTROL0\n", ret);
               return -EIO;
        }
 
        ret = regmap_read(tfa98xx->regmap, 0x10, &STATUS_FLAGS0);
        if (ret < 0) {
-              dev_err(&tfa98xx->i2c->dev, "Failed to read 10h-STATUS_FLAGS0\n");
+              dev_err(&tfa98xx->i2c->dev, "Failed to read 10h-STATUS_FLAGS0\n", ret);
               return -EIO;
        }
 
        ret = regmap_read(tfa98xx->regmap, 0x11, &STATUS_FLAGS1);
        if (ret < 0) {
-              dev_err(&tfa98xx->i2c->dev, "Failed to read 11h-STATUS_FLAGS0\n");
+              dev_err(&tfa98xx->i2c->dev, "Failed to read 11h-STATUS_FLAGS0\n", ret);
               return -EIO;
        }
 
        ret = regmap_read(tfa98xx->regmap, 0x13, &STATUS_FLAGS3);
        if (ret < 0) {
-              dev_err(&tfa98xx->i2c->dev, "Failed to read 13h-STATUS_FLAGS3\n");
+              dev_err(&tfa98xx->i2c->dev, "Failed to read 13h-STATUS_FLAGS3\n", ret);
               return -EIO;
        }
 
        ret = regmap_read(tfa98xx->regmap, 0x14, &STATUS_FLAGS4);
        if (ret < 0) {
-              dev_err(&tfa98xx->i2c->dev, "Failed to read 14h-STATUS_FLAGS4\n");
+              dev_err(&tfa98xx->i2c->dev, "Failed to read 14h-STATUS_FLAGS4\n", ret);
               return -EIO;
        }
 
        ret = regmap_read(tfa98xx->regmap, 0x6e, &STATUS_FLAGS5);
        if (ret < 0) {
-              dev_err(&tfa98xx->i2c->dev, "Failed to read 6eh-STATUS_FLAGS5\n");
+              dev_err(&tfa98xx->i2c->dev, "Failed to read 6eh-STATUS_FLAGS5\n", ret);
               return -EIO;
        }
 
