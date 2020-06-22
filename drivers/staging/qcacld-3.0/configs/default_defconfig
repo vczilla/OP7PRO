@@ -403,9 +403,9 @@ CONFIG_WLAN_ENABLE_SOCIAL_CHANNELS_5G_ONLY := y
 endif
 
 #enable 4addr support for QCS40X
-ifeq ($(CONFIG_ARCH_QCS40X), y)
+#ifeq ($(CONFIG_ARCH_QCS40X), y)
 CONFIG_FEATURE_WLAN_STA_4ADDR_SCHEME := y
-endif
+#endif
 
 #Enable power management suspend/resume functionality to PCI
 CONFIG_ATH_BUS_PM := y
