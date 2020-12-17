@@ -2258,7 +2258,7 @@ static int netlink_dump(struct sock *sk)
 errout_skb:
 	mutex_unlock(nlk->cb_mutex);
 	kfree_skb(skb);
-	return err;g
+	return err;
 }
 
 int __netlink_dump_start(struct sock *ssk, struct sk_buff *skb,
@@ -2305,9 +2305,8 @@ int __netlink_dump_start(struct sock *ssk, struct sk_buff *skb,
 	nlk2 = nlk_sk(NETLINK_CB(skb).sk);
 	cb->strict_check = !!(nlk2->flags & NETLINK_F_STRICT_CHK);
 
-	if (control->start) {
-		ret = control->start(cb);
-
+	if (cb->start) {
+		ret = cb->start(cb);
 		if (ret)
 			goto error_put;
 	}
