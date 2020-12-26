@@ -354,129 +354,91 @@ VL53L1_Error VL53L1_data_init(
         status = VL53L1_init_hist_gen3_dmax_config_struct(
 			&(pdev->dmax_cfg));
 
-
-
-
-
-    if (status == VL53L1_ERROR_NONE)
+	  if (status == VL53L1_ERROR_NONE)
         status = VL53L1_init_tuning_parm_storage_struct(
 			&(pdev->tuning_parms));
 
+		if (status == VL53L1_ERROR_NONE)
+			status = VL53L1_set_preset_mode(
+				Dev,
+				pdev->preset_mode,
+				pdev->dss_config__target_total_rate_mcps,
 
+				pdev->phasecal_config_timeout_us,
+				pdev->mm_config_timeout_us,
+				pdev->range_config_timeout_us,
+				pdev->inter_measurement_period_ms);
 
+		VL53L1_init_histogram_bin_data_struct(
+				0,
+				VL53L1_HISTOGRAM_BUFFER_SIZE,
+				&(pdev->hist_data));
 
+		VL53L1_init_histogram_bin_data_struct(
+				0,
+				VL53L1_HISTOGRAM_BUFFER_SIZE,
+				&(pdev->hist_xtalk));
 
+		VL53L1_init_xtalk_bin_data_struct(
+				0,
+				VL53L1_XTALK_HISTO_BINS,
+				&(pdev->xtalk_shapes.xtalk_shape));
 
-
-	if (status == VL53L1_ERROR_NONE)
-		status = VL53L1_set_preset_mode(
-			Dev,
-			pdev->preset_mode,
-			pdev->dss_config__target_total_rate_mcps,
-
-			pdev->phasecal_config_timeout_us,
-			pdev->mm_config_timeout_us,
-			pdev->range_config_timeout_us,
-			pdev->inter_measurement_period_ms);
-
-
-
-	VL53L1_init_histogram_bin_data_struct(
-			0,
-			VL53L1_HISTOGRAM_BUFFER_SIZE,
-			&(pdev->hist_data));
-
-	VL53L1_init_histogram_bin_data_struct(
-			0,
-			VL53L1_HISTOGRAM_BUFFER_SIZE,
-			&(pdev->hist_xtalk));
-
-
-
-	VL53L1_init_xtalk_bin_data_struct(
-			0,
-			VL53L1_XTALK_HISTO_BINS,
-			&(pdev->xtalk_shapes.xtalk_shape));
-
-
-
-
-
-	VL53L1_xtalk_cal_data_init(
-			Dev
-			);
-
-
-
-
-
-	VL53L1_dynamic_xtalk_correction_data_init(
-			Dev
-			);
-
-
-
-
-
-	VL53L1_low_power_auto_data_init(
-			Dev
-			);
+		VL53L1_xtalk_cal_data_init(Dev);
+		VL53L1_dynamic_xtalk_correction_data_init(Dev);
+		VL53L1_low_power_auto_data_init(Dev);
 
 #ifdef VL53L1_LOG_ENABLE
+		VL53L1_print_static_nvm_managed(
+			&(pdev->stat_nvm),
+		 "data_init():pdev->lldata.stat_nvm.",
+	 	VL53L1_TRACE_MODULE_DATA_INIT);
 
+		VL53L1_print_customer_nvm_managed(
+			&(pdev->customer),
+			"data_init():pdev->lldata.customer.",
+			VL53L1_TRACE_MODULE_DATA_INIT);
 
+		VL53L1_print_nvm_copy_data(
+			&(pdev->nvm_copy_data),
+			"data_init():pdev->lldata.nvm_copy_data.",
+			VL53L1_TRACE_MODULE_DATA_INIT);
 
+		VL53L1_print_dmax_calibration_data(
+			&(pdev->fmt_dmax_cal),
+			"data_init():pdev->lldata.fmt_dmax_cal.",
+			VL53L1_TRACE_MODULE_DATA_INIT);
 
-	VL53L1_print_static_nvm_managed(
-		&(pdev->stat_nvm),
-		"data_init():pdev->lldata.stat_nvm.",
-		VL53L1_TRACE_MODULE_DATA_INIT);
+		VL53L1_print_dmax_calibration_data(
+			&(pdev->cust_dmax_cal),
+			"data_init():pdev->lldata.cust_dmax_cal.",
+			VL53L1_TRACE_MODULE_DATA_INIT);
 
-	VL53L1_print_customer_nvm_managed(
-		&(pdev->customer),
-		"data_init():pdev->lldata.customer.",
-		VL53L1_TRACE_MODULE_DATA_INIT);
+		VL53L1_print_additional_offset_cal_data(
+			&(pdev->add_off_cal_data),
+			"data_init():pdev->lldata.add_off_cal_data.",
+			VL53L1_TRACE_MODULE_DATA_INIT);
 
-	VL53L1_print_nvm_copy_data(
-		&(pdev->nvm_copy_data),
-		"data_init():pdev->lldata.nvm_copy_data.",
-		VL53L1_TRACE_MODULE_DATA_INIT);
+		VL53L1_print_user_zone(
+			&(pdev->mm_roi),
+			"data_init():pdev->lldata.mm_roi.",
+			VL53L1_TRACE_MODULE_DATA_INIT);
 
-	VL53L1_print_dmax_calibration_data(
-		&(pdev->fmt_dmax_cal),
-		"data_init():pdev->lldata.fmt_dmax_cal.",
-		VL53L1_TRACE_MODULE_DATA_INIT);
+		VL53L1_print_optical_centre(
+			&(pdev->optical_centre),
+			"data_init():pdev->lldata.optical_centre.",
+			VL53L1_TRACE_MODULE_DATA_INIT);
 
-	VL53L1_print_dmax_calibration_data(
-		&(pdev->cust_dmax_cal),
-		"data_init():pdev->lldata.cust_dmax_cal.",
-		VL53L1_TRACE_MODULE_DATA_INIT);
-
-	VL53L1_print_additional_offset_cal_data(
-		&(pdev->add_off_cal_data),
-		"data_init():pdev->lldata.add_off_cal_data.",
-		VL53L1_TRACE_MODULE_DATA_INIT);
-
-	VL53L1_print_user_zone(
-		&(pdev->mm_roi),
-		"data_init():pdev->lldata.mm_roi.",
-		VL53L1_TRACE_MODULE_DATA_INIT);
-
-	VL53L1_print_optical_centre(
-		&(pdev->optical_centre),
-		"data_init():pdev->lldata.optical_centre.",
-		VL53L1_TRACE_MODULE_DATA_INIT);
-
-	VL53L1_print_cal_peak_rate_map(
-		&(pdev->cal_peak_rate_map),
-		"data_init():pdev->lldata.cal_peak_rate_map.",
-		VL53L1_TRACE_MODULE_DATA_INIT);
+		VL53L1_print_cal_peak_rate_map(
+			&(pdev->cal_peak_rate_map),
+			"data_init():pdev->lldata.cal_peak_rate_map.",
+			VL53L1_TRACE_MODULE_DATA_INIT);
 
 #endif
 
-	LOG_FUNCTION_END(status);
+		LOG_FUNCTION_END(status);
 
-	return status;
+		return status;
 }
 
 

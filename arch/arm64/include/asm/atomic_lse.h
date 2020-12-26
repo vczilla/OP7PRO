@@ -186,11 +186,32 @@ static inline int atomic_sub_return##name(int i, atomic_t *v)		\
 									\
 	return w0;							\
 }
+static inline int atomic_sub_return(int i, atomic_t *v)
+{
+	register int w0 asm ("w0") = i;
+	register atomic_t *x1 asm ("x1") = v;
+
+	asm volatile(ARM64_LSE_ATOMIC_INSN(
+	/* LL/SC */
+	"	nop\n"
+	__LL_SC_ATOMIC(sub_return)
+	"	nop",
+	/* LSE atomics */
+	"	neg	%w[i], %w[i]\n"
+	"	ldaddal	%w[i], w30, %[v]\n"
+	"	add	%w[i], %w[i], w30")
+	: [i] "+r" (w0), [v] "+Q" (v->counter)
+	: "r" (x1)
+	: "x30", "memory");
+
+	return w0;
+}
+
 
 ATOMIC_OP_SUB_RETURN(_relaxed,   )
 ATOMIC_OP_SUB_RETURN(_acquire,  a, "memory")
 ATOMIC_OP_SUB_RETURN(_release,  l, "memory")
-ATOMIC_OP_SUB_RETURN(        , al, "memory")
+//ATOMIC_OP_SUB_RETURN(        , al, "memory")
 
 #undef ATOMIC_OP_SUB_RETURN
 

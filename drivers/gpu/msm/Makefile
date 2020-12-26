@@ -1,4 +1,5 @@
 ccflags-y := -Iinclude/linux
+ccflags-y += -Wno-unused-variable
 
 msm_kgsl_core-y = \
 	kgsl.o \
