@@ -501,25 +501,26 @@ static const struct file_operations proc_verify_fops = {
 
 static int calibrate_data_read_func(struct seq_file *s, void *v)
 {
-    struct touchpanel_data *ts = s->private;
-    struct sec_proc_operations *sec_ops = (struct sec_proc_operations *)ts->private_data;
+  struct touchpanel_data *ts = s->private;
+  struct sec_proc_operations *sec_ops = (struct sec_proc_operations *)ts->private_data;
 
-    if (!sec_ops->calibration_data)
-        return 0;
+  if (!sec_ops->calibration_data)
+    return 0;
 
 	if (ts->is_suspended)
 		return 0;
-    disable_irq_nosync(ts->irq);
-    mutex_lock(&ts->mutex);
-    if (!ts->touch_count) {
-        sec_ops->calibration_data(s, ts->chip_data);
-    } else {
-        seq_printf(s, "1 error, skip calibrate_data when touch on screen\n");
-    }
-    mutex_unlock(&ts->mutex);
-    enable_irq(ts->irq);
 
-    return 0;
+  disable_irq_nosync(ts->irq);
+  mutex_lock(&ts->mutex);
+  if (!ts->touch_count) {
+      sec_ops->calibration_data(s, ts->chip_data);
+  } else {
+      seq_printf(s, "1 error, skip calibrate_data when touch on screen\n");
+  }
+  mutex_unlock(&ts->mutex);
+  enable_irq(ts->irq);
+
+  return 0;
 }
 
 static int proc_calibrate_data_fops_open(struct inode *inode, struct file *file)

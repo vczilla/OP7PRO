@@ -11,3 +11,5 @@ vhost_vsock-y := vsock.o
 obj-$(CONFIG_VHOST_RING) += vringh.o
 
 obj-$(CONFIG_VHOST)	+= vhost.o
+
+CFLAGS_vhost.o += -Wno-switch

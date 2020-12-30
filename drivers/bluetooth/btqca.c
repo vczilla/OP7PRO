@@ -225,7 +225,7 @@ static int qca_tlv_send_segment_optimised(struct hci_dev *hdev,
 	u32 plen;
 	int err = 0;
 
-	BT_DBG("%s: QCA Download segment #%d size %d", hdev->name,
+	BT_DBG("%s: QCA Download segment #%d size %d", hu->hdev->name,
 		idx, seg_size);
 
 	plen = seg_size + 2;
@@ -304,7 +304,7 @@ static int hst_tlv_send_segment_sync(struct hci_dev *hdev, int idx,
 		err = -EIO;
 	}
 
-out:
+//out:
 	kfree_skb(skb);
 	return err;
 }
@@ -573,7 +573,7 @@ EXPORT_SYMBOL_GPL(qca_set_bdaddr_rome);
 int qca_uart_setup_rome(struct hci_dev *hdev, uint8_t baudrate,
 				qca_enque_send_callback callback)
 {
-	u32 rome_ver = 0;
+	//u32 rome_ver = 0;
 	struct rome_config config;
 	u32 qca_ver = 0;
 	int err;

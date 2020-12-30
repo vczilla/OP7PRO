@@ -486,20 +486,20 @@ int ext4_bio_write_page(struct ext4_io_submit *io,
 	if (!fscrypt_using_hardware_encryption(inode))
 		bounce_page = fscrypt_encrypt_pagecache_blocks(page, PAGE_SIZE,
 							       0, gfp_flags);
-		if (IS_ERR(bounce_page)) {
-			ret = PTR_ERR(bounce_page);
-			if (ret == -ENOMEM &&
-			    (io->io_bio || wbc->sync_mode == WB_SYNC_ALL)) {
-				gfp_flags = GFP_NOFS;
-				if (io->io_bio)
-					ext4_io_submit(io);
-				else
-					gfp_flags |= __GFP_NOFAIL;
-				congestion_wait(BLK_RW_ASYNC, HZ/50);
-				goto retry_encrypt;
-			}
-			bounce_page = NULL;
-			goto out;
+	if (IS_ERR(bounce_page)) {
+		ret = PTR_ERR(bounce_page);
+		if (ret == -ENOMEM &&
+		    (io->io_bio || wbc->sync_mode == WB_SYNC_ALL)) {
+			gfp_flags = GFP_NOFS;
+			if (io->io_bio)
+				ext4_io_submit(io);
+			else
+				gfp_flags |= __GFP_NOFAIL;
+			congestion_wait(BLK_RW_ASYNC, HZ/50);
+			goto retry_encrypt;
+		}
+		bounce_page = NULL;
+		goto out;
 		}
 	}
 

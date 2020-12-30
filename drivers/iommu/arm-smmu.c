@@ -4938,7 +4938,7 @@ static int acpi_smmu_get_data(u32 model, struct arm_smmu_device *smmu)
 	return ret;
 }
 
-static int arm_smmu_device_acpi_probe(struct platform_device *pdev,
+static int inline arm_smmu_device_acpi_probe(struct platform_device *pdev,
 				      struct arm_smmu_device *smmu)
 {
 	struct device *dev = smmu->dev;
